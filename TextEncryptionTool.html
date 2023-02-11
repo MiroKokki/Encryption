@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://i.ibb.co/6sVf7Wb/White-Circle.png" type="image/png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>Text encryption tool</title>
+</head>
+<body>
+<br>
+<h1 style="text-align: center;">Text encryption tool</h1>
+<div id="decrypt">
+<h1>Decrypt:</h1>
+    <br>
+    <label>Encrypted message:</label><br>
+    <input id="demo1"></input>
+    <br>
+
+    <label>key:</label><br>
+    <input id="demo2"></input>
+    <br>
+
+    <br>
+    <label>Message:</label><br>
+    <div id="demo3"></div><br>
+    <button onclick="decrypt()">Decrypt</button>
+</div>
+<br><br>
+<div id="encrypt">
+    <h1>Encrypt:</h1>
+    <br><br>
+    <label>Message:</label><br>
+    <input id="demo5"></input>
+    <br>
+    <label>key:</label><br>
+    <div id="demo4"></div><br>
+    <label>Encrypted message:</label><br>
+    <div id="demo6"></div>
+    <br>
+    <button onclick="encrypt()">Encrypt</button>
+    <input type="button" id="cpkey" onclick="copykey()" value="Copy key"></input>
+    <input type="button" id="cpm" onclick="copym()" value="Copy message"></input>
+    <br>
+    
+</div>
+</body>
+</html>
+<style>
+    body{
+        margin: 0;
+        padding: 0;
+        color: white;
+        background-color: #1d1d1d;
+        font-family: 'Roboto', sans-serif;
+    }
+    #decrypt{
+        width: 30%;
+        padding: 20px;
+        border-radius: 20px;
+        background-color: #2b2b2b;
+        height: fit-content;
+        min-height: 50%;
+        max-height: 70%;
+        position: fixed;
+        top: 20%;
+        left: 200px;
+        word-wrap:break-word;
+        text-align: center;
+        box-shadow: 10px 10px black;
+    }
+    #encrypt{
+        width: 30%;
+        padding: 20px;
+        border-radius: 20px;
+        background-color: #2b2b2b;
+        height: fit-content;
+        min-height: 50%;
+        max-height: 70%;
+        position: fixed;
+        top: 20%;
+        right: 200px;
+        word-wrap:break-word;
+        text-align: center;
+        box-shadow: 10px 10px black;
+    }
+    input{
+        border-radius: 5px;
+        border: none;
+        background-color: rgb(115, 214, 115);
+        font-size: 20px;
+        padding: 5px;
+    }
+    button{
+        border-radius: 5px;
+        border: none;
+        background-color: rgb(115, 214, 115);
+        font-size: 15px;
+        padding: 5px;
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translate(-50%,0);
+    }
+    input:focus, textarea:focus, select:focus{
+        outline: none;
+    }
+    label{
+        font-size: 20px;
+    }
+    #cpkey{
+        border-radius: 5px;
+        border: none;
+        background-color: rgb(115, 214, 115);
+        font-size: 15px;
+        padding: 5px;
+        position: absolute;
+        bottom: 15px;
+        right: 10px;
+        display: none;
+    }
+    #cpm{
+        border-radius: 5px;
+        border: none;
+        background-color: rgb(115, 214, 115);
+        font-size: 15px;
+        padding: 5px;
+        position: absolute;
+        bottom: 15px;
+        left: 10px;
+        display: none;
+    }
+    #demo6{
+        max-height: 50px;
+        overflow-y:auto;
+    }
+    #demo3{
+        max-height: 50px;
+        overflow-y:auto;
+    }
+</style>
+<script>
+    function copykey() {
+    var range = document.createRange();
+    range.selectNode(document.getElementById("demo4"));
+    window.getSelection().removeAllRanges(); // clear current selection
+    window.getSelection().addRange(range); // to select text
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();// to deselect
+    document.getElementById('cpkey').value = 'Copied!';
+    setTimeout(() => {  document.getElementById('cpkey').value = 'Copy key'; }, 500);
+    }
+    function copym() {
+    var range = document.createRange();
+    range.selectNode(document.getElementById("demo6"));
+    window.getSelection().removeAllRanges(); // clear current selection
+    window.getSelection().addRange(range); // to select text
+    document.execCommand("copy");
+    window.getSelection().removeAllRanges();// to deselect
+    document.getElementById('cpm').value = 'Copied!';
+    setTimeout(() => {  document.getElementById('cpm').value = 'Copy message'; }, 500);
+    }
+    const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+    function decrypt(){
+    var encrptedText = document.getElementById("demo1").value;
+    
+    var key = document.getElementById("demo2").value;
+    console.log("Key : "+ key);
+    
+    var decryptedText = CryptoJS.AES.decrypt(encrptedText, key);
+    document.getElementById("demo3").innerHTML = decryptedText.toString(CryptoJS.enc.Utf8);
+    }
+    function encrypt(){
+    var key = genRanHex(64);
+    var cipherText = document.getElementById("demo5").value;
+    console.log("Cipher Text : "+ cipherText);
+    
+    console.log("Key : "+ key);
+    
+    var encrptedText = CryptoJS.AES.encrypt(cipherText, key);
+    document.getElementById("demo6").innerHTML = encrptedText.toString();
+    document.getElementById("demo4").innerHTML = key;
+    document.getElementById("cpm").style.display = "block";
+    document.getElementById("cpkey").style.display = "block";
+    }
+</script>
